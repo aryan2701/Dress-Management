@@ -1,0 +1,70 @@
+/* Global styles */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100vw; /* Full viewport width */
+  height: 100vh; /* Full viewport height */
+  font-family: 'Montserrat', sans-serif; /* Modern font */
+  background-color: #eaeaea; /* Soft background color */
+  color: #454242; /* Dark text */
+}
+
+#root {
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  display: flex; /* Use flexbox */
+  flex-direction: column; /* Column layout */
+  align-items: center; /* Center content */
+  text-align: center;
+}
+
+.logo {
+  height: 6em; /* Fixed logo height */
+  padding: 1.5em;
+  transition: transform 300ms, filter 300ms; /* Smooth transitions */
+}
+
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+  transform: scale(1.05); /* Slightly enlarge on hover */
+}
+
+.card {
+  padding: 2em;
+  background: white; /* Card background */
+  border-radius: 12px; /* Slightly more rounded corners */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); /* Deeper shadow for depth */
+  margin: 1rem; /* Space between cards */
+  width: 600px; /* Fixed width for cards */
+  transition: transform 300ms, box-shadow 300ms; /* Smooth hover effect */
+}
+
+.card:hover {
+  transform: translateY(-4px); /* Lift effect on hover */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); /* Enhanced shadow */
+}
+
+.read-the-docs {
+  color: #888;
+  text-decoration: none; /* Remove underline */
+  transition: color 300ms; /* Smooth color transition */
+}
+
+.read-the-docs:hover {
+  color: #646cff; /* Change color on hover */
+}
+
+/* Custom styles for buttons */
+.button {
+  background-color: #646cff; /* Primary button color */
+  color: white; /* Button text color */
+  border: none; /* Remove border */
+  border-radius: 5px; /* Rounded corners */
+  padding: 10px 20px; /* Padding for button */
+  cursor: pointer; /* Pointer cursor */
+  transition: background-color 300ms; /* Smooth transition */
+}
+
+.button:hover {
+  background-color: #505bc1; /* Darker shade on hover */
+}
