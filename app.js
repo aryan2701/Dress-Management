@@ -6,9 +6,8 @@ const cors = require('cors');
 const schoolRoutes = require('./routes/school'); 
 const itemRoutes = require('./routes/itemRoutes');
 const headofficeRoutes = require('./routes/headofficeRoutes');
-
-
-
+const authRoutes = require('./routes/auth'); // Make sure to import auth routes
+const supplierRoutes = require('./routes/supplier'); // Ensure supplier routes are imported
 
 // Load environment variables
 dotenv.config();
@@ -19,22 +18,19 @@ connectDB();
 const app = express();
 
 // Middleware
-app.use(express.json());
-app.use(cors());
+app.use(express.json()); // Parses incoming JSON requests
+app.use(cors({
+  origin: 'http://localhost:5173', // Allow requests from this specific origin
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify allowed methods
+  credentials: true // Enable credentials if needed
+}));
 
 // Routes
-app.use('/auth', require('./routes/auth'));
-app.use('/supplier', require('./routes/supplier'));
-app.use('/school', require('./routes/school'));
-
-app.use('/schools', schoolRoutes); 
-
-app.use('/api', itemRoutes);
-
-
-app.use('/headoffice', headofficeRoutes);
-
-
+app.use('/auth', authRoutes); // Auth routes
+app.use('/supplier', supplierRoutes); // Supplier routes
+app.use('/school', schoolRoutes); // School routes
+app.use('/api', itemRoutes); // Item routes
+app.use('/headoffice', headofficeRoutes); // Head office routes
 
 // Start the server
 const PORT = process.env.PORT || 5000;
