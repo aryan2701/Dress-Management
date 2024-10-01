@@ -20,7 +20,7 @@ const app = express();
 // Middleware
 app.use(express.json()); // Parses incoming JSON requests
 app.use(cors({
-  origin: 'http://localhost:5173', // Allow requests from this specific origin
+  origin: 'http://35.154.62.70', // Allow requests from this specific origin
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify allowed methods
   credentials: true // Enable credentials if needed
 }));
