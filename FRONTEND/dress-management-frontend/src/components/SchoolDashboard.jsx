@@ -6,7 +6,7 @@ import {
   sellItemsToStudent,
   getItems,
 } from "../api";
-import mongoose from "mongoose";
+
 
 const SchoolDashboard = ({ token }) => {
   const [pendingDispatches, setPendingDispatches] = useState([]);
