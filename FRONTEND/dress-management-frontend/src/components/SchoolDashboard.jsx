@@ -5,9 +5,7 @@ import {
   getStudentDetails,
   sellItemsToStudent,
   getItems,
-} from "../api";
-import mongoose from "mongoose";
-
+} from "../api"; // Ensure this points to the correct API file
 
 const SchoolDashboard = ({ token }) => {
   const [pendingDispatches, setPendingDispatches] = useState([]);
@@ -93,11 +91,6 @@ const SchoolDashboard = ({ token }) => {
   };
 
   const handleProcessSale = async () => {
-    if (!mongoose.Types.ObjectId.isValid(studentId)) {
-      alert("Invalid Student ID format.");
-      return;
-    }
-
     const saleData = {
       studentId,
       items: selectedItems.map((item) => ({
@@ -124,6 +117,7 @@ const SchoolDashboard = ({ token }) => {
     <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
       <h2 style={{ color: "#333" }}>School Dashboard</h2>
 
+      {/* Dispatch Section */}
       <h3 style={{ color: "#007bff" }}>Verify Dispatches</h3>
       {pendingDispatches.length > 0 ? (
         pendingDispatches.map((dispatch) => (
@@ -178,6 +172,7 @@ const SchoolDashboard = ({ token }) => {
         <p>No pending dispatches to verify.</p>
       )}
 
+      {/* Sale Section */}
       <h3 style={{ color: "#007bff" }}>Sell Items to Student</h3>
       <div>
         <input
@@ -212,6 +207,7 @@ const SchoolDashboard = ({ token }) => {
             <p>Name: {studentDetails.name}</p>
             <p>Class: {studentDetails.class}</p>
 
+            {/* Sale Items */}
             <h5>Add Items to Sale</h5>
             {selectedItems.map((item, index) => (
               <div key={index} style={{ marginBottom: "10px" }}>
