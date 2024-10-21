@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { getDispatchedData, getSchoolInventory, getSchools } from "../api";
 import {
   Grid,
   Card,
@@ -17,9 +16,20 @@ import {
   TableCell,
   TableRow,
   TableHead,
-  Paper,
   Box,
+  AppBar,
+  Toolbar,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Divider,
+  IconButton,
+  Tooltip,
 } from "@mui/material";
+import SchoolIcon from "@mui/icons-material/School";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import RefreshIcon from "@mui/icons-material/Refresh";
+import { getDispatchedData, getSchoolInventory, getSchools } from "../api";
 
 const HeadOfficeDashboard = ({ token }) => {
   const [schools, setSchools] = useState([]);
@@ -27,11 +37,14 @@ const HeadOfficeDashboard = ({ token }) => {
   const [dispatchedData, setDispatchedData] = useState([]);
   const [schoolInventory, setSchoolInventory] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [totalRevenue, setTotalRevenue] = useState(0);
 
+  // Fetch the list of schools when the component mounts
   useEffect(() => {
     const fetchSchools = async () => {
       try {
         const response = await getSchools(token);
+        console.log("Fetched Schools:", response.data); // Debugging
         setSchools(response.data);
       } catch (err) {
         console.error("Error fetching schools:", err);
@@ -40,6 +53,7 @@ const HeadOfficeDashboard = ({ token }) => {
     fetchSchools();
   }, [token]);
 
+  // Fetch dispatched data and inventory for the selected school
   useEffect(() => {
     const fetchData = async () => {
       if (!selectedSchoolId) return;
@@ -50,8 +64,21 @@ const HeadOfficeDashboard = ({ token }) => {
           getDispatchedData(token, selectedSchoolId),
           getSchoolInventory(selectedSchoolId, token),
         ]);
-        setDispatchedData(dispatchedResponse.data);
+
+        console.log("Dispatched Data:", dispatchedResponse.data); // Debugging
+        console.log("School Inventory:", inventoryResponse.data); // Debugging
+
+        setDispatchedData(dispatchedResponse.data || []);
         setSchoolInventory(inventoryResponse.data);
+
+        // Calculate total revenue
+        const revenue =
+          inventoryResponse.data?.inventoryItems?.[0]?.items.reduce(
+            (acc, item) => acc + (item.totalRevenue || 0),
+            0
+          ) || 0;
+
+        setTotalRevenue(revenue);
       } catch (err) {
         console.error("Error fetching data:", err);
       } finally {
@@ -63,10 +90,24 @@ const HeadOfficeDashboard = ({ token }) => {
   }, [selectedSchoolId, token]);
 
   return (
-    <Box sx={{ padding: 3 }}>
-      <Typography variant="h4" gutterBottom color="primary">
-        Head Office Dashboard
-      </Typography>
+    <Box sx={{ padding: 3, bgcolor: "#f0f4f8", minHeight: "100vh" }}>
+      {/* App Bar */}
+      <AppBar position="static" sx={{ mb: 3, bgcolor: "#1976d2" }}>
+        <Toolbar>
+          <SchoolIcon />
+          <Typography variant="h6" sx={{ ml: 2, color: "#fff" }}>
+            Head Office Dashboard
+          </Typography>
+          <IconButton
+            onClick={() => window.location.reload()}
+            sx={{ marginLeft: "auto", color: "#fff" }}
+          >
+            <Tooltip title="Refresh Data">
+              <RefreshIcon />
+            </Tooltip>
+          </IconButton>
+        </Toolbar>
+      </AppBar>
 
       {/* School Selector */}
       <Grid container spacing={2}>
@@ -75,7 +116,12 @@ const HeadOfficeDashboard = ({ token }) => {
             <InputLabel>Select School</InputLabel>
             <Select
               value={selectedSchoolId}
-              onChange={(e) => setSelectedSchoolId(e.target.value)}
+              onChange={(e) => {
+                setSelectedSchoolId(e.target.value);
+                setDispatchedData([]); // Clear dispatched data when changing school
+                setSchoolInventory(null); // Clear inventory when changing school
+                setTotalRevenue(0); // Reset total revenue
+              }}
               label="Select School"
             >
               <MenuItem value="" disabled>
@@ -100,63 +146,105 @@ const HeadOfficeDashboard = ({ token }) => {
             <CircularProgress />
           </Grid>
         )}
+      </Grid>
 
-        {/* Dispatched Items Section */}
-        {selectedSchoolId && !loading && (
-          <Grid item xs={12} md={6}>
-            <Card elevation={3} sx={{ mb: 3 }}>
+      {/* Total Revenue Section */}
+      {selectedSchoolId && !loading && (
+        <Grid container spacing={2} sx={{ mt: 3 }}>
+          <Grid item xs={12}>
+            <Card elevation={3} sx={{ mb: 3, backgroundColor: "#e3f2fd" }}>
               <CardContent>
-                <Typography variant="h6" color="secondary" gutterBottom>
-                  Dispatched Items
+                <Typography variant="h5" color="primary" gutterBottom>
+                  Total Revenue Generated: ₹{totalRevenue}
                 </Typography>
-                {dispatchedData.length > 0 ? (
-                  dispatchedData.map((dispatch) => (
-                    <Paper
-                      elevation={1}
-                      key={dispatch.date}
-                      sx={{
-                        padding: 2,
-                        marginBottom: 2,
-                        backgroundColor: "#fafafa",
-                      }}
-                    >
-                      <Typography variant="body1" gutterBottom>
-                        Date: {new Date(dispatch.date).toLocaleDateString()}
-                      </Typography>
-                      <Typography variant="body2" color="textSecondary">
-                        School: {dispatch.school}
-                      </Typography>
-                      <List>
-                        {dispatch.dispatchedItems.map((item, index) => (
-                          <ListItem key={index} sx={{ padding: "4px 0" }}>
-                            {item.itemName} - Size: {item.size} - Quantity:{" "}
-                            {item.quantity} - Price: ₹{item.pricePerItem} -
-                            Total: ₹{item.totalPrice}
-                          </ListItem>
-                        ))}
-                      </List>
-                      <Typography variant="subtitle2">
-                        Total Amount for the Day: ₹{dispatch.totalAmountForDay}
-                      </Typography>
-                    </Paper>
-                  ))
-                ) : (
-                  <Typography>No dispatched items available.</Typography>
-                )}
               </CardContent>
             </Card>
           </Grid>
-        )}
 
-        {/* School Inventory Section */}
-        {selectedSchoolId && !loading && (
+          {/* Dispatched Items Section */}
           <Grid item xs={12} md={6}>
             <Card elevation={3} sx={{ mb: 3 }}>
               <CardContent>
-                <Typography variant="h6" color="secondary" gutterBottom>
+                <Typography variant="h6" color="primary" gutterBottom>
+                  Dispatched Items for{" "}
+                  {
+                    schools.find((school) => school._id === selectedSchoolId)
+                      ?.username
+                  }
+                </Typography>
+                <Box
+                  sx={{
+                    maxHeight: 400,
+                    overflowY: "auto",
+                    mb: 2,
+                    border: "1px solid #e0e0e0",
+                    borderRadius: 2,
+                    padding: 1,
+                    bgcolor: "#ffffff",
+                  }}
+                >
+                  {dispatchedData.length > 0 ? (
+                    dispatchedData
+                    //.filter(dispatch => dispatch.schoolId === selectedSchoolId)
+                    . map((dispatch) => (
+                      <Accordion key={dispatch.date} elevation={1}>
+                        <AccordionSummary
+                          expandIcon={<ExpandMoreIcon />}
+                          aria-controls="panel1a-content"
+                          id="panel1a-header"
+                        >
+                          <Typography variant="body1">
+                            <strong>Date:</strong>{" "}
+                            {new Date(dispatch.date).toLocaleDateString()}
+                          </Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                          <Typography variant="body2" color="textSecondary">
+                            <strong>School:</strong> {dispatch.school}
+                          </Typography>
+                          <List>
+                            {dispatch.dispatchedItems.map((item, index) => (
+                              <ListItem
+                                key={index}
+                                sx={{
+                                  padding: "4px 0",
+                                  borderBottom: "1px solid #e0e0e0",
+                                }}
+                              >
+                                <Typography variant="body2">
+                                  {item.itemName} - Size: {item.size} -
+                                  Quantity: {item.quantity} - Price: ₹
+                                  {item.pricePerItem} - Total: ₹
+                                  {item.totalPrice}
+                                </Typography>
+                              </ListItem>
+                            ))}
+                          </List>
+                          <Divider sx={{ my: 1 }} />
+                          <Typography variant="subtitle2">
+                            <strong>Total Amount for the Day:</strong> ₹
+                            {dispatch.totalAmountForDay}
+                          </Typography>
+                        </AccordionDetails>
+                      </Accordion>
+                    ))
+                  ) : (
+                    <Typography>No dispatched items available.</Typography>
+                  )}
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          {/* School Inventory Section */}
+          <Grid item xs={12} md={6}>
+            <Card elevation={3} sx={{ mb: 3 }}>
+              <CardContent>
+                <Typography variant="h6" color="primary" gutterBottom>
                   School Inventory
                 </Typography>
-                {schoolInventory ? (
+                {schoolInventory &&
+                schoolInventory.inventoryItems?.length > 0 ? (
                   <Table>
                     <TableHead>
                       <TableRow>
@@ -169,7 +257,7 @@ const HeadOfficeDashboard = ({ token }) => {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {schoolInventory.inventoryItems[0]?.items.map(
+                      {schoolInventory.inventoryItems[0].items.map(
                         (item, index) => (
                           <TableRow key={index}>
                             <TableCell>{item.itemName}</TableCell>
@@ -189,8 +277,8 @@ const HeadOfficeDashboard = ({ token }) => {
               </CardContent>
             </Card>
           </Grid>
-        )}
-      </Grid>
+        </Grid>
+      )}
     </Box>
   );
 };
