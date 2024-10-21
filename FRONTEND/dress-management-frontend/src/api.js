@@ -63,8 +63,8 @@ export const getStudentDetails = (studentId, token) =>
   });
 
 // Get dispatched data for the Head Office
-export const getDispatchedData = (token) =>
-  axios.get(`${API_URL}/headoffice/dispatched`, {
+export const getDispatchedData = (token,schoolId) =>
+  axios.get(`${API_URL}/headoffice/dispatched/${schoolId}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
 
@@ -73,3 +73,4 @@ export const getSchoolInventory = (schoolId, token) =>
   axios.get(`${API_URL}/headoffice/school-inventory/${schoolId}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
+
