@@ -6,7 +6,159 @@ import {
   sellItemsToStudent,
   getItems,
 } from "../api"; // Ensure this points to the correct API file
-
+const sizePriceMap = {
+  "Shirt Full Sleeves": {
+    sizes: ["24", "26", "28", "30", "32", "34", "36", "38", "40", "42"],
+    prices: {
+      "24": 400,
+      "26": 400,
+      "28": 420,
+      "30": 420,
+      "32": 420,
+      "34": 450,
+      "36": 450,
+      "38": 475,
+      "40": 475,
+      "42": 475,
+    },
+  },
+  "Normal Skirt": {
+    sizes: ["24", "26", "28", "30", "32","34","36","38","40","42"],
+    prices: {
+      "24": 350,
+      "26": 350,
+      "28": 370,
+      "30": 370,
+      "32": 370,
+      "34": 390,
+      "36": 390,
+      "38": 410,
+      "40": 410,
+      "42": 410
+    },
+  },
+  "Divider Skirt":{
+    sizes: ["20''","22''","24''","26''"],
+    prices:{
+      "20''": 460,
+      "22''": 480,
+      "24''": 500,
+      "26''": 510
+    },
+  },
+  "Pant Elastic":{
+    sizes: ["24","26","28","30","32","34","36","38","40","42","44"],
+    prices:{
+      "24": 360,
+      "26": 360,
+      "28": 380,
+      "30": 380,
+      "32": 380,
+      "34": 400,
+      "36": 400,
+      "38": 450,
+      "40": 450,
+      "42": 450,
+      "44": 450
+    },
+  },
+ 
+  "PC Matty House Tshirt":{
+    sizes: ["24","26","28","30","32","34","36","38","40","42","44"],
+    prices:{
+      "24": 270,
+      "26": 270,
+      "28": 290,
+      "30": 290,
+      "32": 290,
+      "34": 300,
+      "36": 300,
+      "38": 320,
+      "40": 320,
+      "42": 320,
+      "44": 320
+    },
+  },
+ 
+ 
+  "Coat":{
+     sizes: ["24","26","28","30","32","34","36","38","40","42","44"],
+    prices:{
+      "24": 850,
+      "26": 850,
+      "28": 950,
+      "30": 950,
+      "32": 950,
+      "34": 1050,
+      "36": 1050,
+      "38": 1150,
+      "40": 1150,
+      "42": 1150,
+      "44": 1150
+    },
+  },
+  "Tie":{
+    sizes: ["Zipper 12''","Zipper 14''","Zipper 16''","Zipper 18''"],
+    prices:{
+      "Zipper 12''":150,
+      "Zipper 14''":150,
+      "Zipper 16''":150,
+      "Zipper 18''":150
+    },
+  },
+  "Belts":{
+    sizes: ["80cm","95cm","110cm","120cm"],
+    prices:{
+       "80cm": 150,
+       "95cm": 150,
+       "110cm": 150,
+       "120cm": 150
+    },
+  },
+  "RSGS Socks":{
+   sizes: ["2","3","4","5","6","FS"],
+   prices:{
+  "2": 50,
+  "3": 50,
+  "4": 50,
+  "5": 70,
+  "6": 70,
+  "FS":70
+   }
+  },
+  "Hoodie/Sweatshirt":{
+    sizes: ["24","26","28","30","32","34","36","38","40","42","44"],
+    prices:{
+      "24": 600,
+      "26": 600,
+      "28": 650,
+      "30": 650,
+      "32": 650,
+      "34": 700,
+      "36": 700,
+      "38": 750,
+      "40": 750,
+      "42": 750,
+      "44": 750
+    },
+  },
+  "Lower Navy 1 line White":{
+    sizes:["24","26","28","30","32","34","36","38","40","42","44"],
+     prices:{
+      "24": 225,
+      "26": 225,
+      "28": 250,
+      "30": 250,
+      "32": 250,
+      "34": 270,
+      "36": 270,
+      "38": 290,
+      "40": 290,
+      "42": 290,
+      "44": 290
+    },
+  }
+};
 const SchoolDashboard = ({ token }) => {
   const [pendingDispatches, setPendingDispatches] = useState([]);
   const [studentId, setStudentId] = useState("");
@@ -113,6 +265,21 @@ const SchoolDashboard = ({ token }) => {
     }
   };
 
+  const handleItemChange = (index, field, value) => {
+    const newItems = [...selectedItems];
+    newItems[index][field] = value;
+
+    if (field === "itemId" || field === "size") {
+      const selectedItem = items.find((i) => i._id === newItems[index].itemId);
+      const size = newItems[index].size;
+      if (selectedItem && size && sizePriceMap[selectedItem.name]) {
+        newItems[index].price = sizePriceMap[selectedItem.name].prices[size];
+      }
+    }
+
+    setSelectedItems(newItems);
+  };
+
   return (
     <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
       <h2 style={{ color: "#333" }}>School Dashboard</h2>
@@ -209,126 +376,125 @@ const SchoolDashboard = ({ token }) => {
 
             {/* Sale Items */}
             <h5>Add Items to Sale</h5>
-            {selectedItems.map((item, index) => (
-              <div key={index} style={{ marginBottom: "10px" }}>
-                <label>
-                  Select Item:
-                  <select
-                    value={item.itemId}
-                    onChange={(e) => {
-                      const newItems = [...selectedItems];
-                      newItems[index].itemId = e.target.value;
-                      setSelectedItems(newItems);
-                    }}
-                    style={{
-                      marginLeft: "10px",
-                      padding: "5px",
-                      borderRadius: "4px",
-                      border: "1px solid #ccc",
-                    }}
-                  >
-                    <option value="">Select an Item</option>
-                    {items.map((availableItem) => (
-                      <option key={availableItem._id} value={availableItem._id}>
-                        {availableItem.name} - ₹{availableItem.price}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <input
-                  type="text"
-                  placeholder="Size"
-                  value={item.size}
-                  onChange={(e) => {
-                    const newItems = [...selectedItems];
-                    newItems[index].size = e.target.value;
-                    setSelectedItems(newItems);
-                  }}
-                  style={{
-                    marginLeft: "10px",
-                    padding: "5px",
-                    borderRadius: "4px",
-                    border: "1px solid #ccc",
-                  }}
-                />
-                <input
-                  type="number"
-                  placeholder="Quantity"
-                  value={item.quantity}
-                  onChange={(e) => {
-                    const newItems = [...selectedItems];
-                    newItems[index].quantity = parseInt(e.target.value, 10);
-                    setSelectedItems(newItems);
-                  }}
-                  style={{
-                    marginLeft: "10px",
-                    padding: "5px",
-                    borderRadius: "4px",
-                    border: "1px solid #ccc",
-                  }}
-                />
-                <input
-                  type="number"
-                  placeholder="Price"
-                  value={item.price}
-                  onChange={(e) => {
-                    const newItems = [...selectedItems];
-                    newItems[index].price = parseFloat(e.target.value);
-                    setSelectedItems(newItems);
-                  }}
-                  style={{
-                    marginLeft: "10px",
-                    padding: "5px",
-                    borderRadius: "4px",
-                    border: "1px solid #ccc",
-                  }}
-                />
-                {selectedItems.length > 1 && (
+            {selectedItems.map((item, index) => {
+              const selectedItem = items.find((i) => i._id === item.itemId);
+              const availableSizes =
+                selectedItem && sizePriceMap[selectedItem.name]
+                  ? sizePriceMap[selectedItem.name].sizes
+                  : [];
+
+              return (
+                <div key={index} style={{ marginBottom: "10px" }}>
+                  <label>
+                    Select Item:
+                    <select
+                      value={item.itemId}
+                      onChange={(e) =>
+                        handleItemChange(index, "itemId", e.target.value)
+                      }
+                      style={{
+                        marginLeft: "10px",
+                        padding: "5px",
+                        borderRadius: "4px",
+                        border: "1px solid #ccc",
+                      }}
+                    >
+                      <option value="">Select an Item</option>
+                      {items.map((availableItem) => (
+                        <option
+                          key={availableItem._id}
+                          value={availableItem._id}
+                        >
+                          {availableItem.name}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <label style={{ marginLeft: "10px" }}>
+                    Select Size:
+                    <select
+                      value={item.size}
+                      onChange={(e) =>
+                        handleItemChange(index, "size", e.target.value)
+                      }
+                      style={{
+                        marginLeft: "10px",
+                        padding: "5px",
+                        borderRadius: "4px",
+                        border: "1px solid #ccc",
+                      }}
+                      disabled={availableSizes.length === 0}
+                    >
+                      <option value="">Select Size</option>
+                      {availableSizes.map((size) => (
+                        <option key={size} value={size}>
+                          {size}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <label style={{ marginLeft: "10px" }}>
+                    Quantity:
+                    <input
+                      type="number"
+                      value={item.quantity}
+                      onChange={(e) =>
+                        handleItemChange(index, "quantity", e.target.value)
+                      }
+                      min="0"
+                      style={{
+                        marginLeft: "10px",
+                        padding: "5px",
+                        borderRadius: "4px",
+                        border: "1px solid #ccc",
+                      }}
+                    />
+                  </label>
+                  <label style={{ marginLeft: "10px" }}>
+                    Price: {item.price}
+                  </label>
                   <button
-                    type="button"
                     onClick={() => handleRemoveItem(index)}
                     style={{
-                      marginLeft: "10px",
                       backgroundColor: "#dc3545",
                       color: "white",
                       border: "none",
                       padding: "5px 10px",
                       borderRadius: "5px",
+                      marginLeft: "10px",
                       cursor: "pointer",
                     }}
                   >
                     Remove Item
                   </button>
-                )}
-              </div>
-            ))}
+                </div>
+              );
+            })}
 
             <button
-              type="button"
               onClick={handleAddItemToSale}
-              style={{
-                marginTop: "10px",
-                backgroundColor: "#007bff",
-                color: "white",
-                border: "none",
-                padding: "5px 10px",
-                borderRadius: "5px",
-                cursor: "pointer",
-              }}
-            >
-              Add Another Item
-            </button>
-
-            <h5>Total Bill: ₹ {calculateTotalBill().toFixed(2)}</h5>
-
-            <button
-              type="button"
-              onClick={handleProcessSale}
               style={{
                 backgroundColor: "#28a745",
                 color: "white",
                 border: "none",
                 padding: "5px 10px",
+                borderRadius: "5px",
+                cursor: "pointer",
+                marginTop: "10px",
+              }}
+            >
+              Add Another Item
+            </button>
+
+            <h5>Total Bill: {calculateTotalBill()}</h5>
+
+            <button
+              onClick={handleProcessSale}
+              style={{
+                backgroundColor: "#007bff",
+                color: "white",
+                border: "none",
+                padding: "10px 20px",
                 borderRadius: "5px",
                 cursor: "pointer",
               }}
