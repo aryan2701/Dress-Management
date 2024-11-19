@@ -36,8 +36,10 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 // Define size-price mapping based on item and size combinations
 const ITEM_SIZE_PRICE_MAP = {
   "Shirt Full Sleeves": {
-    sizes: ["24", "26", "28", "30", "32","34","36","38","40","42"],
+    sizes: ["20","22", "24", "26", "28", "30", "32","34","36","38","40","42"],
     prices: {
+      "20": 310,
+      "22": 310,
       "24": 310,
       "26": 310,
       "28": 320,
@@ -51,8 +53,10 @@ const ITEM_SIZE_PRICE_MAP = {
     },
   },
  "Normal Skirt": {
-    sizes: ["24", "26", "28", "30", "32","34","36","38","40","42"],
+    sizes: [ "20","22","24", "26", "28", "30", "32","34","36","38","40","42"],
     prices: {
+      "20": 290,
+      "22": 290,
       "24": 290,
       "26": 290,
       "28": 320,
@@ -66,12 +70,12 @@ const ITEM_SIZE_PRICE_MAP = {
     },
   },
   "Divider Skirt":{
-    sizes: ["20''","22''","24''","26''"],
+    sizes: ["20","22","24","26"],
     prices:{
-      "20''": 410,
-      "22''": 410,
-      "24''": 430,
-      "26''": 430
+      "20": 410,
+      "22": 410,
+      "24": 430,
+      "26": 430
     },
   },
   "Pant Elastic":{
@@ -128,8 +132,10 @@ const ITEM_SIZE_PRICE_MAP = {
  
  
   "Coat":{
-     sizes: ["24","26","28","30","32","34","36","38","40","42","44"],
+     sizes: [ "20","22", "24","26","28","30","32","34","36","38","40","42","44"],
     prices:{
+      "20": 740,
+      "22": 740,
       "24": 740,
       "26": 740,
       "28": 840,
@@ -144,12 +150,12 @@ const ITEM_SIZE_PRICE_MAP = {
     },
   },
   "Tie":{
-    sizes: ["Zipper 12''","Zipper 14''","Zipper 16''","Zipper 18''"],
+    sizes: ["Zipper 12","Zipper 14","Zipper 16","Zipper 18"],
     prices:{
-      "Zipper 12''":105,
-      "Zipper 14''":105,
-      "Zipper 16''":105,
-      "Zipper 18''":105
+      "Zipper 12":105,
+      "Zipper 14":105,
+      "Zipper 16":105,
+      "Zipper 18":105
     },
   },
   "Belts":{
