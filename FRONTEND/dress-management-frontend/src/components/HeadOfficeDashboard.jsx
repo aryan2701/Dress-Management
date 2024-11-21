@@ -68,7 +68,18 @@ const HeadOfficeDashboard = ({ token }) => {
         console.log("Dispatched Data:", dispatchedResponse.data); // Debugging
         console.log("School Inventory:", inventoryResponse.data); // Debugging
 
-        setDispatchedData(dispatchedResponse.data || []);
+        // Correctly calculate totalAmountForDay for each dispatch
+        const updatedDispatchedData = dispatchedResponse.data.map(
+          (dispatch) => {
+            const totalAmountForDay = dispatch.dispatchedItems.reduce(
+              (acc, item) => acc + item.pricePerItem, // Sum pricePerItem directly
+              0
+            );
+            return { ...dispatch, totalAmountForDay };
+          }
+        );
+
+        setDispatchedData(updatedDispatchedData || []);
         setSchoolInventory(inventoryResponse.data);
 
         // Calculate total revenue
@@ -166,11 +177,7 @@ const HeadOfficeDashboard = ({ token }) => {
             <Card elevation={3} sx={{ mb: 3 }}>
               <CardContent>
                 <Typography variant="h6" color="primary" gutterBottom>
-                  Dispatched Items for{" "}
-                  {
-                    schools.find((school) => school._id === selectedSchoolId)
-                      ?.username
-                  }
+                  Dispatched Items
                 </Typography>
                 <Box
                   sx={{
@@ -184,9 +191,7 @@ const HeadOfficeDashboard = ({ token }) => {
                   }}
                 >
                   {dispatchedData.length > 0 ? (
-                    dispatchedData
-                    //.filter(dispatch => dispatch.schoolId === selectedSchoolId)
-                    . map((dispatch) => (
+                    dispatchedData.map((dispatch) => (
                       <Accordion key={dispatch.date} elevation={1}>
                         <AccordionSummary
                           expandIcon={<ExpandMoreIcon />}
@@ -214,8 +219,7 @@ const HeadOfficeDashboard = ({ token }) => {
                                 <Typography variant="body2">
                                   {item.itemName} - Size: {item.size} -
                                   Quantity: {item.quantity} - Price: ₹
-                                  {item.pricePerItem} - Total: ₹
-                                  {item.totalPrice}
+                                  {item.pricePerItem}
                                 </Typography>
                               </ListItem>
                             ))}
