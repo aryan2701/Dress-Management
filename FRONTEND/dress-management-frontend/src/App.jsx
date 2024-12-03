@@ -12,7 +12,7 @@ function App() {
       <Routes>
         {/* Layout wraps all the main routes */}
 
-        <Route path="/risingsun" element={<Layout />}>
+        <Route path="/" element={<Layout />}>
           <Route index element={<Home />} /> {/* Default Route */}
           <Route path="supplier" element={<Supplier />} />
           <Route path="school" element={<School />} />
