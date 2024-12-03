@@ -5,173 +5,257 @@ import {
   getStudentDetails,
   sellItemsToStudent,
   getItems,
+  getSchoolInventory,
 } from "../api"; // Ensure this points to the correct API file
+
 const sizePriceMap = {
   "Shirt Full Sleeves": {
-    sizes: [ "20", "22","24", "26", "28", "30", "32", "34", "36", "38", "40", "42"],
+    sizes: [
+      "20",
+      "22",
+      "24",
+      "26",
+      "28",
+      "30",
+      "32",
+      "34",
+      "36",
+      "38",
+      "40",
+      "42",
+    ],
     prices: {
-      "20": 400,
-      "22": 400,
-      "24": 400,
-      "26": 400,
-      "28": 420,
-      "30": 420,
-      "32": 420,
-      "34": 450,
-      "36": 450,
-      "38": 475,
-      "40": 475,
-      "42": 475,
-      "44": 475,
+      20: 400,
+      22: 400,
+      24: 400,
+      26: 400,
+      28: 420,
+      30: 420,
+      32: 420,
+      34: 450,
+      36: 450,
+      38: 475,
+      40: 475,
+      42: 475,
+      44: 475,
     },
   },
   "Normal Skirt": {
-    sizes: ["20","22","24", "26", "28", "30", "32","34","36","38","40","42"],
+    sizes: [
+      "20",
+      "22",
+      "24",
+      "26",
+      "28",
+      "30",
+      "32",
+      "34",
+      "36",
+      "38",
+      "40",
+      "42",
+    ],
     prices: {
-      "20": 350,
-      "22": 350,
-      "24": 350,
-      "26": 350,
-      "28": 370,
-      "30": 370,
-      "32": 370,
-      "34": 390,
-      "36": 390,
-      "38": 410,
-      "40": 410,
-      "42": 410
+      20: 350,
+      22: 350,
+      24: 350,
+      26: 350,
+      28: 370,
+      30: 370,
+      32: 370,
+      34: 390,
+      36: 390,
+      38: 410,
+      40: 410,
+      42: 410,
     },
   },
-  "Divider Skirt":{
-    sizes: ["20","22","24","26"],
-    prices:{
-      "20": 460,
-      "22": 480,
-      "24": 500,
-      "26": 510
+  "Divider Skirt": {
+    sizes: ["20", "22", "24", "26"],
+    prices: {
+      20: 460,
+      22: 480,
+      24: 500,
+      26: 510,
     },
   },
-  "Pant Elastic":{
-    sizes: ["20", "22" , "24","26","28","30","32","34","36","38","40","42","44"],
-    prices:{
-      "20": 360,
-      "22": 360,
-      "24": 360,
-      "26": 360,
-      "28": 380,
-      "30": 380,
-      "32": 380,
-      "34": 400,
-      "36": 400,
-      "38": 450,
-      "40": 450,
-      "42": 450,
-      "44": 450
+  "Pant Elastic": {
+    sizes: [
+      "20",
+      "22",
+      "24",
+      "26",
+      "28",
+      "30",
+      "32",
+      "34",
+      "36",
+      "38",
+      "40",
+      "42",
+      "44",
+    ],
+    prices: {
+      20: 360,
+      22: 360,
+      24: 360,
+      26: 360,
+      28: 380,
+      30: 380,
+      32: 380,
+      34: 400,
+      36: 400,
+      38: 450,
+      40: 450,
+      42: 450,
+      44: 450,
     },
   },
- 
-  "PC Matty House Tshirt":{
-    sizes: ["20", "22" ,"24","26","28","30","32","34","36","38","40","42","44"],
-    prices:{
-       "20": 270,
-       "22": 270,
-      "24": 270,
-      "26": 270,
-      "28": 290,
-      "30": 290,
-      "32": 290,
-      "34": 300,
-      "36": 300,
-      "38": 320,
-      "40": 320,
-      "42": 320,
-      "44": 320
+
+  "PC Matty House Tshirt": {
+    sizes: [
+      "20",
+      "22",
+      "24",
+      "26",
+      "28",
+      "30",
+      "32",
+      "34",
+      "36",
+      "38",
+      "40",
+      "42",
+      "44",
+    ],
+    prices: {
+      20: 270,
+      22: 270,
+      24: 270,
+      26: 270,
+      28: 290,
+      30: 290,
+      32: 290,
+      34: 300,
+      36: 300,
+      38: 320,
+      40: 320,
+      42: 320,
+      44: 320,
     },
   },
- 
- 
-  "Coat":{
-     sizes: ["20","22","24","26","28","30","32","34","36","38","40","42","44"],
-    prices:{
-      "20": 950,
-      "22": 950,
-      "24": 950,
-      "26": 950,
-      "28": 1050,
-      "30": 1050,
-      "32": 1050,
-      "34": 1150,
-      "36": 1150,
-      "38": 1250,
-      "40": 1250,
-      "42": 1250,
-      "44": 1250
+
+  Coat: {
+    sizes: [
+      "20",
+      "22",
+      "24",
+      "26",
+      "28",
+      "30",
+      "32",
+      "34",
+      "36",
+      "38",
+      "40",
+      "42",
+      "44",
+    ],
+    prices: {
+      20: 950,
+      22: 950,
+      24: 950,
+      26: 950,
+      28: 1050,
+      30: 1050,
+      32: 1050,
+      34: 1150,
+      36: 1150,
+      38: 1250,
+      40: 1250,
+      42: 1250,
+      44: 1250,
     },
   },
-  "Tie":{
-    sizes: ["Zipper 12''","Zipper 14''","Zipper 16''","Zipper 18''"],
-    prices:{
-      "Zipper 12":150,
-      "Zipper 14":150,
-      "Zipper 16":150,
-      "Zipper 18":150
+  Tie: {
+    sizes: ["Zipper 12''", "Zipper 14''", "Zipper 16''", "Zipper 18''"],
+    prices: {
+      "Zipper 12": 150,
+      "Zipper 14": 150,
+      "Zipper 16": 150,
+      "Zipper 18": 150,
     },
   },
-  "Belts":{
-    sizes: ["80cm","95cm","110cm","120cm"],
-    prices:{
-       "80cm": 150,
-       "95cm": 150,
-       "110cm": 150,
-       "120cm": 150
+  Belts: {
+    sizes: ["80cm", "95cm", "110cm", "120cm"],
+    prices: {
+      "80cm": 150,
+      "95cm": 150,
+      "110cm": 150,
+      "120cm": 150,
     },
   },
-  "RSGS Socks":{
-   sizes: ["2","3","4","5","6","FS"],
-   prices:{
-  "2": 50,
-  "3": 50,
-  "4": 50,
-  "5": 70,
-  "6": 70,
-  "FS":70
-   }
-  },
-  "Hoodie/Sweatshirt":{
-    sizes: ["20","22", "24","26","28","30","32","34","36","38","40","42","44"],
-    prices:{
-      "20": 650,
-      "22": 650,
-      "24": 650,
-      "26": 650,
-      "28": 700,
-      "30": 700,
-      "32": 700,
-      "34": 750,
-      "36": 750,
-      "38": 800,
-      "40": 800,
-      "42": 800,
-      "44": 800
+  "RSGS Socks": {
+    sizes: ["2", "3", "4", "5", "6", "FS"],
+    prices: {
+      2: 50,
+      3: 50,
+      4: 50,
+      5: 70,
+      6: 70,
+      FS: 70,
     },
   },
-  "Lower Navy 1 line White":{
-    sizes:["24","26","28","30","32","34","36","38","40","42","44"],
-     prices:{
-      "24": 225,
-      "26": 225,
-      "28": 250,
-      "30": 250,
-      "32": 250,
-      "34": 270,
-      "36": 270,
-      "38": 290,
-      "40": 290,
-      "42": 290,
-      "44": 290
+  "Hoodie/Sweatshirt": {
+    sizes: [
+      "20",
+      "22",
+      "24",
+      "26",
+      "28",
+      "30",
+      "32",
+      "34",
+      "36",
+      "38",
+      "40",
+      "42",
+      "44",
+    ],
+    prices: {
+      20: 650,
+      22: 650,
+      24: 650,
+      26: 650,
+      28: 700,
+      30: 700,
+      32: 700,
+      34: 750,
+      36: 750,
+      38: 800,
+      40: 800,
+      42: 800,
+      44: 800,
     },
-  }
+  },
+  "Lower Navy 1 line White": {
+    sizes: ["24", "26", "28", "30", "32", "34", "36", "38", "40", "42", "44"],
+    prices: {
+      24: 225,
+      26: 225,
+      28: 250,
+      30: 250,
+      32: 250,
+      34: 270,
+      36: 270,
+      38: 290,
+      40: 290,
+      42: 290,
+      44: 290,
+    },
+  },
 };
+
 const SchoolDashboard = ({ token }) => {
   const [pendingDispatches, setPendingDispatches] = useState([]);
   const [studentId, setStudentId] = useState("");
@@ -180,6 +264,8 @@ const SchoolDashboard = ({ token }) => {
     { itemId: "", size: "", quantity: 0, price: 0 },
   ]);
   const [items, setItems] = useState([]);
+  const [schoolInventory, setSchoolInventory] = useState([]);
+  const [loading, setLoading] = useState(true); // Loading state for inventory
 
   useEffect(() => {
     const fetchPendingDispatches = async () => {
@@ -200,8 +286,26 @@ const SchoolDashboard = ({ token }) => {
       }
     };
 
+    const fetchInventory = async () => {
+      try {
+        setLoading(true); // Start loading
+        const schoolId = JSON.parse(atob(token.split(".")[1])).id;
+        const inventoryData = await getSchoolInventory(schoolId, token);
+        if (inventoryData && inventoryData.inventoryItems) {
+          setSchoolInventory(inventoryData.inventoryItems);
+        } else {
+          console.error("Inventory data not found:", inventoryData);
+        }
+      } catch (err) {
+        console.error("Error fetching school inventory:", err);
+      } finally {
+        setLoading(false); // Stop loading once the request is complete
+      }
+    };
+
     fetchPendingDispatches();
     fetchItems();
+    fetchInventory();
   }, [token]);
 
   const handleVerifyDispatch = async (dispatchId, items) => {
@@ -352,7 +456,146 @@ const SchoolDashboard = ({ token }) => {
         <p>No pending dispatches to verify.</p>
       )}
 
-      {/* Sale Section */}
+      {/* Inventory Section */}
+      <h3 style={{ color: "#007bff" }}>School Inventory</h3>
+      {loading ? (
+        <p>Loading inventory data...</p>
+      ) : schoolInventory.length > 0 ? (
+        <div>
+          <table
+            style={{
+              width: "100%",
+              borderCollapse: "collapse",
+              marginTop: "20px",
+            }}
+          >
+            <thead>
+              <tr style={{ backgroundColor: "#f1f1f1" }}>
+                <th
+                  style={{
+                    border: "1px solid #ccc",
+                    padding: "8px",
+                    textAlign: "left",
+                  }}
+                >
+                  Item Name
+                </th>
+                <th
+                  style={{
+                    border: "1px solid #ccc",
+                    padding: "8px",
+                    textAlign: "left",
+                  }}
+                >
+                  Size
+                </th>
+                <th
+                  style={{
+                    border: "1px solid #ccc",
+                    padding: "8px",
+                    textAlign: "right",
+                  }}
+                >
+                  Quantity Remaining
+                </th>
+                <th
+                  style={{
+                    border: "1px solid #ccc",
+                    padding: "8px",
+                    textAlign: "right",
+                  }}
+                >
+                  Quantity Sold
+                </th>
+                <th
+                  style={{
+                    border: "1px solid #ccc",
+                    padding: "8px",
+                    textAlign: "right",
+                  }}
+                >
+                  Total Revenue
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {schoolInventory.flatMap((inventory) =>
+                inventory.items.map((item, index) => (
+                  <tr key={index}>
+                    <td style={{ border: "1px solid #ccc", padding: "8px" }}>
+                      {item.itemName}
+                    </td>
+                    <td style={{ border: "1px solid #ccc", padding: "8px" }}>
+                      {item.size}
+                    </td>
+                    <td
+                      style={{
+                        border: "1px solid #ccc",
+                        padding: "8px",
+                        textAlign: "right",
+                      }}
+                    >
+                      {item.quantityReceived}
+                    </td>
+                    <td
+                      style={{
+                        border: "1px solid #ccc",
+                        padding: "8px",
+                        textAlign: "right",
+                      }}
+                    >
+                      {item.quantitySold}
+                    </td>
+                    <td
+                      style={{
+                        border: "1px solid #ccc",
+                        padding: "8px",
+                        textAlign: "right",
+                      }}
+                    >
+                      {item.totalRevenue}
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+            <tfoot>
+              <tr style={{ backgroundColor: "#f9f9f9", fontWeight: "bold" }}>
+                <td
+                  colSpan="4"
+                  style={{
+                    border: "1px solid #ccc",
+                    padding: "8px",
+                    textAlign: "right",
+                  }}
+                >
+                  Total Revenue
+                </td>
+                <td
+                  style={{
+                    border: "1px solid #ccc",
+                    padding: "8px",
+                    textAlign: "right",
+                  }}
+                >
+                  {schoolInventory.reduce(
+                    (total, inventory) =>
+                      total +
+                      inventory.items.reduce(
+                        (sum, item) => sum + item.totalRevenue,
+                        0
+                      ),
+                    0
+                  )}
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      ) : (
+        <p>No inventory data found.</p>
+      )}
+
       <h3 style={{ color: "#007bff" }}>Sell Items to Student</h3>
       <div>
         <input

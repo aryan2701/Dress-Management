@@ -24,4 +24,6 @@ router.get('/student/:studentId', authMiddleware, schoolController.getStudentByI
 // Get items
 router.get('/items', authMiddleware, schoolController.getItems);
 
+router.get('/school-inventory/:schoolId', authMiddleware, schoolController.getSchoolInventoryschool);
+
 module.exports = router;

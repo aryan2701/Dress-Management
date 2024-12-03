@@ -29,7 +29,11 @@ import {
 import SchoolIcon from "@mui/icons-material/School";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import RefreshIcon from "@mui/icons-material/Refresh";
-import { getDispatchedData, getSchoolInventory, getSchools } from "../api";
+import {
+  getDispatchedData,
+  getHeadOfficeSchoolInventory,
+  getSchools,
+} from "../api";
 
 const HeadOfficeDashboard = ({ token }) => {
   const [schools, setSchools] = useState([]);
@@ -44,7 +48,6 @@ const HeadOfficeDashboard = ({ token }) => {
     const fetchSchools = async () => {
       try {
         const response = await getSchools(token);
-        console.log("Fetched Schools:", response.data); // Debugging
         setSchools(response.data);
       } catch (err) {
         console.error("Error fetching schools:", err);
@@ -61,14 +64,11 @@ const HeadOfficeDashboard = ({ token }) => {
       setLoading(true);
       try {
         const [dispatchedResponse, inventoryResponse] = await Promise.all([
-          getDispatchedData(token, selectedSchoolId),
-          getSchoolInventory(selectedSchoolId, token),
+          getDispatchedData(selectedSchoolId, token),
+          getHeadOfficeSchoolInventory(selectedSchoolId, token),
         ]);
 
-        console.log("Dispatched Data:", dispatchedResponse.data); // Debugging
-        console.log("School Inventory:", inventoryResponse.data); // Debugging
-
-        // Correctly calculate totalAmountForDay for each dispatch
+        // Calculate totalAmountForDay for dispatched data
         const updatedDispatchedData = dispatchedResponse.data.map(
           (dispatch) => {
             const totalAmountForDay = dispatch.dispatchedItems.reduce(
@@ -81,7 +81,6 @@ const HeadOfficeDashboard = ({ token }) => {
 
         setDispatchedData(updatedDispatchedData || []);
         setSchoolInventory(inventoryResponse.data);
-
         // Calculate total revenue
         const revenue =
           inventoryResponse.data?.inventoryItems?.[0]?.items.reduce(
@@ -129,9 +128,9 @@ const HeadOfficeDashboard = ({ token }) => {
               value={selectedSchoolId}
               onChange={(e) => {
                 setSelectedSchoolId(e.target.value);
-                setDispatchedData([]); // Clear dispatched data when changing school
-                setSchoolInventory(null); // Clear inventory when changing school
-                setTotalRevenue(0); // Reset total revenue
+                setDispatchedData([]);
+                setSchoolInventory(null);
+                setTotalRevenue(0);
               }}
               label="Select School"
             >
@@ -254,15 +253,15 @@ const HeadOfficeDashboard = ({ token }) => {
                       <TableRow>
                         <TableCell>Item</TableCell>
                         <TableCell>Size</TableCell>
-                        <TableCell>Quantity Received</TableCell>
+                        <TableCell>Quantity Remaining</TableCell>
                         <TableCell>Quantity Sold</TableCell>
                         <TableCell>Price Sold At</TableCell>
                         <TableCell>Total Revenue</TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {schoolInventory.inventoryItems[0].items.map(
-                        (item, index) => (
+                      {schoolInventory.inventoryItems.flatMap((inventory) =>
+                        inventory.items.map((item, index) => (
                           <TableRow key={index}>
                             <TableCell>{item.itemName}</TableCell>
                             <TableCell>{item.size}</TableCell>
@@ -271,7 +270,7 @@ const HeadOfficeDashboard = ({ token }) => {
                             <TableCell>₹{item.priceSoldAt}</TableCell>
                             <TableCell>₹{item.totalRevenue || 0}</TableCell>
                           </TableRow>
-                        )
+                        ))
                       )}
                     </TableBody>
                   </Table>

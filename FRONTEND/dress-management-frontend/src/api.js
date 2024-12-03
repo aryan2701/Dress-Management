@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://13.234.59.199:5000'; // Replace with your backend URL
+const API_URL = 'http://localhost:5000'; // Replace with your backend URL
 
 // Register user
 export const register = (userData) => axios.post(`${API_URL}/auth/register`, userData);
@@ -63,14 +63,22 @@ export const getStudentDetails = (studentId, token) =>
   });
 
 // Get dispatched data for the Head Office
-export const getDispatchedData = (token,schoolId) =>
+export const getDispatchedData = (schoolId, token) =>
   axios.get(`${API_URL}/headoffice/dispatched/${schoolId}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
 
 // Get school inventory data for Head Office
-export const getSchoolInventory = (schoolId, token) =>
+// For Head Office
+export const getHeadOfficeSchoolInventory = (schoolId, token) =>
   axios.get(`${API_URL}/headoffice/school-inventory/${schoolId}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
 
+// For Schools
+export const getSchoolInventory = async (schoolId, token) => {
+  const response = await axios.get(`${API_URL}/school/school-inventory/${schoolId}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return response.data;
+};

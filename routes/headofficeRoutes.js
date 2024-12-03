@@ -11,6 +11,7 @@ const authMiddleware = require('../middleware/authMiddleware');
 // Route for getting dispatched data from suppliers
 router.get('/dispatched/:schoolId',authMiddleware, headofficeController.getDispatchedData);
 
+
 // Route for checking school inventory
 router.get('/school-inventory/:schoolId',authMiddleware, headofficeController.getSchoolInventory);
 

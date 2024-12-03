@@ -3,6 +3,7 @@ const Sale = require('../models/Sale');
 const Dispatch = require('../models/Dispatch');
 const User = require('../models/User');
 const Student = require('../models/Student');
+const School = require('../models/School');
 
 // Verify items and update inventory
 exports.verifyItems = async (req, res) => {
@@ -137,6 +138,10 @@ exports.getPendingDispatches = async (req, res) => {
 exports.getStudentById = async (req, res) => {
   const { studentId } = req.params;
 
+  if (!studentId) {
+    return res.status(400).json({ msg: 'Invalid student ID' });
+  }
+
   try {
     const student = await Student.findOne({ studentId });
     if (!student) {
@@ -148,6 +153,7 @@ exports.getStudentById = async (req, res) => {
     return res.status(500).json({ msg: 'Server error while fetching student' });
   }
 };
+
 
 // Get all items available in the inventory for the logged-in school
 exports.getItems = async (req, res) => {
@@ -162,5 +168,80 @@ exports.getItems = async (req, res) => {
   } catch (err) {
     console.error('Error fetching items:', err);
     return res.status(500).json({ msg: 'Server error while fetching items' });
+  }
+};
+
+
+
+exports.getSchoolInventoryschool = async (req, res) => {
+  try {
+      const { startDate, endDate } = req.query;
+      const { schoolId } = req.params;
+
+      const userId = req.user.id;
+      const user = await User.findById(userId);
+      if (!user || user.role !== 'school') {
+          return res.status(403).json({ message: 'Access denied: User not authorized' });
+      }
+
+      const school = await School.findById(schoolId);
+      if (!school) return res.status(404).json({ message: 'School not found' });
+
+      const dateFilter = {};
+      if (startDate) {
+          dateFilter.$gte = new Date(startDate);
+      }
+      if (endDate) {
+          dateFilter.$lte = new Date(endDate);
+      }
+
+      const receivedItems = await Inventory.find({
+          schoolId: schoolId,
+          ...(Object.keys(dateFilter).length > 0 && { lastUpdated: dateFilter })
+      }).populate('items.itemId', 'name');
+
+      const soldItems = await Sale.find({  // Corrected from 'Sales' to 'Sale'
+          schoolId: schoolId,
+          ...(Object.keys(dateFilter).length > 0 && { soldAt: dateFilter })
+      }).populate('items.itemId', 'name');
+
+      const response = receivedItems.map(received => {
+          return {
+              schoolId: received.schoolId,
+              items: received.items.map(item => {
+                  const sold = soldItems.reduce((acc, soldItem) => {
+                      if (!soldItem.items) return acc;
+
+                      const soldItemDetails = soldItem.items.find(i => 
+                          i.itemId && item.itemId && i.itemId.equals(item.itemId._id) && i.size === item.size
+                      );
+
+                      if (soldItemDetails) {
+                          acc.quantitySold += soldItemDetails.quantity;
+                          acc.priceSoldAt = soldItemDetails.price;
+                          acc.totalRevenue += soldItemDetails.quantity * soldItemDetails.price;
+                      }
+                      return acc;
+                  }, { quantitySold: 0, priceSoldAt: 0, totalRevenue: 0 });
+
+                  return {
+                      itemName: item.itemId.name,
+                      size: item.size,
+                      quantityReceived: item.quantity,
+                      quantitySold: sold.quantitySold,
+                      priceSoldAt: sold.priceSoldAt,
+                      totalRevenue: sold.totalRevenue
+                  };
+              }),
+              lastUpdated: received.lastUpdated
+          };
+      });
+
+      res.json({
+          school: school.username,
+          inventoryItems: response
+      });
+  } catch (err) {
+      res.status(500).json({ message: err.message });
   }
 };
